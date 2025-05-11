@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Access Logs</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .container {
+            margin-top: 40px;
+        }
+        .log-container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 15px;
+            height: 500px;
+            overflow-y: scroll;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .log-entry {
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .filter-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body class="container mt-4">
+
+    <h2>📜 Access Logs</h2>
+
+    <div class="filter-container">
+        <select id="roleFilter" class="form-select">
+            <option value="">Filter by Role</option>
+            <option value="admin">Admin</option>
+            <option value="doctor">Doctor</option>
+            <option value="nurse">Nurse</option>
+            <option value="patient">Patient</option>
+        </select>
+
+        <select id="actionFilter" class="form-select">
+            <option value="">Filter by Action</option>
+            <option value="Signed in">Signed In</option>
+            <option value="Logged out">Logged Out</option>
+            <option value="Registered">Registered</option>
+            <option value="Viewed Dashboard">Viewed Dashboard</option>
+            <option value="Viewed Records">Viewed Records</option>
+            <option value="Approved Appointment">Approved Appointment</option>
+            <option value="Rejected Appointment">Rejected Appointment</option>
+            <option value="Added Record">Added Record</option>
+            <option value="Deleted Record">Deleted Record</option>
+            <option value="Assigned Nurse">Assigned Nurse</option>
+        </select>
+
+        <input type="text" id="searchUser" class="form-control" placeholder="Search by Username">
+
+        <button class="btn btn-primary" onclick="filterLogs()">Apply</button>
+        <button class="btn btn-secondary" onclick="resetFilters()">Reset</button>
+    </div>
+
+    <div class="log-container" id="logContainer">
+        {% for log in logs %}
+        <p class="log-entry">{{ log }}</p>
+        {% endfor %}
+    </div>
+
+    <a href="/dashboard" class="btn btn-secondary mt-3">⬅️ Back to Dashboard</a>
+
+    <script>
+        function filterLogs() {
+            let roleFilter = document.getElementById('roleFilter').value.toLowerCase();
+            let actionFilter = document.getElementById('actionFilter').value.toLowerCase();
+            let searchUser = document.getElementById('searchUser').value.toLowerCase();
+            let logs = document.querySelectorAll('.log-entry');
+
+            logs.forEach(log => {
+                let text = log.textContent.toLowerCase();
+                if ((roleFilter === "" || text.includes(`role: ${roleFilter}`)) &&
+                    (actionFilter === "" || text.includes(`action: ${actionFilter}`)) &&
+                    (searchUser === "" || text.includes(`user: ${searchUser}`))) {
+                    log.style.display = "block";
+                } else {
+                    log.style.display = "none";
+                }
+            });
+        }
+
+        function resetFilters() {
+            document.getElementById('roleFilter').value = "";
+            document.getElementById('actionFilter').value = "";
+            document.getElementById('searchUser').value = "";
+            let logs = document.querySelectorAll('.log-entry');
+            logs.forEach(log => log.style.display = "block");
+        }
+    </script>
+
+</body>
+</html>
